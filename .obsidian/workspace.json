@@ -228,8 +228,17 @@
       "bases:Create new base": false
     }
   },
-  "active": "7a6952a64327f90c",
+  "active": "d320e7a832e42a9b",
   "lastOpenFiles": [
+    "Obsidian_notes/Pasted image 20260901194024.png",
+    "Obsidian_notes/Pasted image 20260901193954.png",
+    "Obsidian_notes/Pasted image 20260901191649.png",
+    "README.md",
+    "tictactoe-stm32h750b-dk.md",
+    "Pasted image 20260901194024.png",
+    "Pasted image 20260901193954.png",
+    "Pasted image 20260901191649.png",
+    "Pasted image 20260901163745.png",
     "build/Release/CMakeFiles/Ethernet_game.dir/Core/Src/main.c.obj.d",
     "build/Release/Ethernet_game.elf",
     "build/Release/Ethernet_game.map",
@@ -240,7 +249,6 @@
     "build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mmc.c.obj",
     "build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mmc.c.obj.d",
     "build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.c.obj",
-    "build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.c.obj.d",
     "Obsidian_notes/tictactoe-stm32h750b-dk.md",
     "Obsidian_notes/tictactoe-stm32h750b-dk.md",
     "Obsidian_notes/2026-08-31-tictactoe-stm32h750b-dk_1.md",
