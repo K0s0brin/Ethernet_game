@@ -5,12 +5,12 @@
   * @brief          : STM32H750B-DK -- hardware bring-up, Ethernet, Mongoose,
   *                   and the top-level application state machine.
   *
-  * Everything else lives in its own module:
-  *   lcd.c    framebuffer primitives and the font
-  *   touch.c  I2C4 and the capacitive touch controller
-  *   game.c   Tic-Tac-Toe rules, no hardware
-  *   ui.c     menu screen, game screen, and their hit tests
-  ******************************************************************************
+  razdelitev po datotekah:
+  lcd.c    framebuffer primitives and the font
+  touch.c  I2C4 and the capacitive touch controller
+  game.c   Pravila igre
+  ui.c     menu screen, game screen, and their hit tests
+
   */
 
 #include "main.h"
@@ -257,13 +257,13 @@ static bool ETH_PhyBringUp(void)
   return true;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Ethernet MII pins + clocks                                                 */
-/*                                                                            */
-/* MB1381 wires the LAN8740 in MII, not RMII -- UM2488 section 6.10, and the  */
-/* MII_* pin labels in Ethernet_game.ioc. This replaces hal_ethernet_init()   */
-/* from hal.h, which is written for the H747I-DISCO (RMII).                   */
-/* -------------------------------------------------------------------------- */
+
+/* Ethernet MII pins + clocks                                                                                                                       
+MB1381 wires the LAN8740 in MII, UM2488 section 6.10, and the  
+MII_* pin labels in Ethernet_game.ioc. This replaces hal_ethernet_init()   
+from hal.h, which is written for the H747I-DISCO (RMII) mongoose imel narejeno samo za board H747I-DISCO
+*/
+
 static void ETH_MII_HwInit(void)
 {
   static const uint16_t pins[] = {
@@ -297,13 +297,6 @@ static void ETH_MII_HwInit(void)
   RCC->AHB1ENR |= BIT(15) | BIT(16) | BIT(17);  /* ETH1MAC / ETH1TX / ETH1RX */
   (void) RCC->AHB1ENR;
 }
-
-/* -------------------------------------------------------------------------- */
-/* Mongoose TCP/IP driver on top of HAL_ETH                                   */
-/*                                                                            */
-/* Mongoose's bundled mg_tcpip_driver_stm32h is unusable here: it programs    */
-/* SYSCFG for RMII.                                                           */
-/* -------------------------------------------------------------------------- */
 
 /* Mongoose's own TX buffer lives in DTCM, which the Ethernet DMA cannot read,
  * so every outgoing frame is bounced through D2 RAM. */
@@ -410,9 +403,6 @@ static void netif_init(struct mg_mgr *mgr) {
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* Application                                                                */
-/* -------------------------------------------------------------------------- */
 
 /* CELL_EMPTY in a local game: the screen plays both sides. */
 static Cell board_seat(void) {
@@ -458,21 +448,13 @@ static void ip_to_string(void) {
               (unsigned) ((ip >> 8) & 255),  (unsigned) (ip & 255));
 }
 
-/*
- * Back to the menu.
- *
- * A software reset rather than tearing the stack down by hand: it re-runs the
- * whole init, so DHCP, the PHY and Mongoose all come up clean, and there is
- * no half-freed interface to get wrong. The menu is the first thing after
- * boot, so the user lands exactly where they expect.
- */
+// nazaj menu samo reseta board 
 static void go_back_to_menu(void) {
   MG_INFO(("BACK: resetting to the menu"));
-  HAL_Delay(50);                                  /* let the UART drain */
+  HAL_Delay(1);                                  // popravi serial monitor izpis
   NVIC_SystemReset();
 }
 
-/* One tap on the game screen. */
 static void handle_tap(int x, int y) {
   Cell player;
   int cell;
@@ -483,7 +465,7 @@ static void handle_tap(int x, int y) {
   }
 
   if (s_game.status != GS_PLAYING) {
-    App_NewRound();                               /* tap anywhere = next round */
+    App_NewRound();                               
     redraw();
     return;
   }
@@ -491,12 +473,6 @@ static void handle_tap(int x, int y) {
   cell = UI_CellAt(x, y);
   if (cell < 0) return;
 
-  /*
-   * In a local game the screen plays whoever's turn it is. In a network game
-   * it plays only its own seat, so a tap during the opponent's turn is
-   * refused by Game_Move() and nothing happens -- the board cannot move for
-   * the browser.
-   */
   player = (s_mode == MODE_LOCAL) ? s_game.current : Proto_BoardSeat();
 
   if (Game_Move(&s_game, (uint8_t) cell, player)) {
@@ -531,7 +507,7 @@ int main(void)
   MX_FMC_Init();          /* SDRAM is not used; the framebuffer is in AXI SRAM */
   MG_INFO(("FMC OK"));
 
-  LCD_Fill(COL_BG);       /* paint before the layer goes live */
+  LCD_Fill(COL_BG);    
   MX_LTDC_Init();
   MG_INFO(("LTDC OK"));
 
@@ -547,11 +523,7 @@ int main(void)
     MG_ERROR(("PHY bring-up failed - RX will not work"));
   }
 
-  /* ---------------------------------------------------------------------- */
-  /* Mode selection. The network is not started until a mode is chosen,      */
-  /* which is why DIRECT and ROUTER can differ without re-initialising the   */
-  /* stack.                                                                 */
-  /* ---------------------------------------------------------------------- */
+  // network ne starta dokler ne izberemo načina v to stanje tudi vrne board ko damo back
 
   s_mode = UI_SelectMode();
   MG_INFO(("MODE: %s", MODE_NAME[s_mode]));
@@ -569,26 +541,21 @@ int main(void)
 
   Game_Init(&s_game);
 
-  /* Round 1: the board is X and opens, the browser is O. */
   if (s_mode != MODE_LOCAL) Proto_Start(&g_mgr, &s_game, CELL_X);
 
   redraw();
 
-  /* ---------------------------------------------------------------------- */
   /* Main loop                                                              */
-  /* ---------------------------------------------------------------------- */
 
   while (1)
   {
     int tx, ty;
 
     if (s_mode != MODE_LOCAL) {
-      mg_mgr_poll(&g_mgr, 0);
+      mg_mgr_poll(&g_mgr, 0); // ARP, IP, TCP, HTTP
 
-      /* Redraw when the interface changes state, so the address appears as
-       * soon as DHCP or ARP settles. */
       {
-        static uint8_t last_state = 0xFF;
+        static uint8_t last_state = 0xFF; 
         if (s_mif.state != last_state) {
           last_state = s_mif.state;
           if (s_mif.state == MG_TCPIP_STATE_READY) {
@@ -599,7 +566,7 @@ int main(void)
         }
       }
 
-      /* A move or a new round came in from the browser. */
+      // preveri če je karkoli prišlo iz drugega klienta
       if (Proto_TakeDirty()) redraw();
     }
 
@@ -656,12 +623,7 @@ void SystemClock_Config(void)
       RCC_CLOCKTYPE_D3PCLK1 |
       RCC_CLOCKTYPE_D1PCLK1;
 
-  /*
-   * Keep your original clock configuration for the first
-   * size-reduction build.
-   *
-   * We will optimize the clock later.
-   */
+
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_HCLK_DIV1;
@@ -677,9 +639,7 @@ void SystemClock_Config(void)
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* Ethernet                                                                   */
-/* -------------------------------------------------------------------------- */
+// Ethernet
 
 static void MX_ETH_Init(void)
 {
@@ -690,8 +650,8 @@ static void MX_ETH_Init(void)
   heth.Init.MACAddr = &s_mac[0];
 
   /*
-   * STM32H750B-DK / MB1381: the LAN8740 is wired in MII, not RMII.
-   * See UM2488 section 6.10 and the MII_* pin labels in Ethernet_game.ioc.
+  STM32H750B-DK / MB1381: LAN8740 je v MII
+  UM2488 section 6.10 in MII_* pin labels v Ethernet_game.ioc.
    */
   heth.Init.MediaInterface = HAL_ETH_MII_MODE;
 
@@ -779,12 +739,7 @@ static void MX_FMC_Init(void)
   hsdram1.Init.CASLatency = FMC_SDRAM_CAS_LATENCY_1;
   hsdram1.Init.WriteProtection = FMC_SDRAM_WRITE_PROTECTION_DISABLE;
 
-  /*
-   * NOTE: the SDRAM is NOT actually usable as memory in this state -- the
-   * clock is disabled and the JEDEC power-up sequence is never sent. That's
-   * fine: the framebuffer lives in AXI SRAM. Leave this alone unless you
-   * genuinely need the external RAM later.
-   */
+
   hsdram1.Init.SDClockPeriod = FMC_SDRAM_CLOCK_DISABLE;
   hsdram1.Init.ReadBurst = FMC_SDRAM_RBURST_DISABLE;
   hsdram1.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_0;
@@ -820,8 +775,8 @@ static void MX_FMC_Init(void)
 static void MX_UART3_Raw_Init(void)
 {
   hal_uart_init(USART3,
-                PIN('B', 10), 7,   /* TX: PB10, AF7 */
-                PIN('B', 11), 7,   /* RX: PB11, AF7 */
+                PIN('B', 10), 7,   // TX: PB10, AF7
+                PIN('B', 11), 7,   // RX: PB11, AF7
                 115200);
 }
 
@@ -854,13 +809,9 @@ static void MX_GPIO_Init(void)
   /*
    * LEDs
    */
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET); // nerabijo vec sploh so bile za debug
   HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, GPIO_PIN_RESET);
 
-  /*
-   * LCD display enable (PD7). Despite the LCD_DISPD7 label this is the
-   * panel's DISP pin -- it must be driven high or the panel stays blank.
-   */
   HAL_GPIO_WritePin(LCD_DISPD7_GPIO_Port, LCD_DISPD7_Pin, GPIO_PIN_SET);
   GPIO_InitStruct.Pin   = LCD_DISPD7_Pin;
   GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
@@ -947,9 +898,6 @@ static void MX_GPIO_Init(void)
       &GPIO_InitStruct);
 }
 
-/* -------------------------------------------------------------------------- */
-/* MPU                                                                        */
-/* -------------------------------------------------------------------------- */
 
 void MPU_Config(void)
 {
@@ -974,9 +922,6 @@ void MPU_Config(void)
   HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT);
 }
 
-/* -------------------------------------------------------------------------- */
-/* Error Handler                                                              */
-/* -------------------------------------------------------------------------- */
 
 void Error_Handler(void)
 {

@@ -27,9 +27,7 @@ void LCD_Frame(int x, int y, int w, int h, int t, uint16_t c) {
   LCD_FillRect(x + w - t, y, t, h, c);
 }
 
-/* -------------------------------------------------------------------------- */
-/* 5x7 font. Column-major: each byte is one column, bit 0 = top row.          */
-/* -------------------------------------------------------------------------- */
+// 5x7 font. Column-major: each byte is one column, bit 0 = top row.
 
 static const char FONT_CHARS[] = " -./0123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 

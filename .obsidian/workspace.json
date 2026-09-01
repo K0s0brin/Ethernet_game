@@ -55,12 +55,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Obsidian_notes/2026-08-31-tictactoe-stm32h750b-dk.md",
+                "file": "Obsidian_notes/tictactoe-stm32h750b-dk.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-08-31-tictactoe-stm32h750b-dk"
+              "title": "tictactoe-stm32h750b-dk"
             }
           }
         ],
@@ -230,25 +230,25 @@
   },
   "active": "7a6952a64327f90c",
   "lastOpenFiles": [
-    "build/Release/CMakeCache.txt.tmp1d08d",
-    "build/Release/compile_commands.json.tmp185ee",
-    "build/Release/CMakeFiles/rules.ninja.tmpb05fc",
-    "build/Release/build.ninja.tmpda781",
-    "build/Release/CMakeCache.txt.tmp3ecb7",
-    "Obsidian_notes/2026-08-31-tictactoe-stm32h750b-dk.md",
-    "Obsidian_notes/2026-08-31-tictactoe-stm32h750b-dk.md",
+    "build/Release/CMakeFiles/Ethernet_game.dir/Core/Src/main.c.obj.d",
+    "build/Release/Ethernet_game.elf",
+    "build/Release/Ethernet_game.map",
+    "build/Release/CMakeFiles/Ethernet_game.dir/Core/Src/mongoose.c.obj",
+    "build/Release/CMakeFiles/Ethernet_game.dir/Core/Src/mongoose.c.obj.d",
+    "build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c.obj",
+    "build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_uart.c.obj.d",
+    "build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mmc.c.obj",
+    "build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_hal_mmc.c.obj.d",
+    "build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.c.obj",
+    "build/Release/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir/__/__/Drivers/STM32H7xx_HAL_Driver/Src/stm32h7xx_ll_usb.c.obj.d",
+    "Obsidian_notes/tictactoe-stm32h750b-dk.md",
+    "Obsidian_notes/tictactoe-stm32h750b-dk.md",
     "Obsidian_notes/2026-08-31-tictactoe-stm32h750b-dk_1.md",
     "Obsidian_notes/kaj še ne razumem 100%.md",
     "Obsidian_notes/porocilo.md",
-    "Untitled.base",
     "Untitled.md",
-    "Untitled",
     "Obsidian_notes/VIN zapiski/Untitled.md",
     "Obsidian_notes/VIN zapiski/Predavanje_VIN_1.md",
-    "Obsidian_notes/VIN zapiski",
-    "build/Release/CMakeCache.txt.tmpb8f86",
-    "build/Release/cmake/stm32cubemx/cmake_install.cmake.tmp3c545",
-    "build/Release/cmake_install.cmake.tmp4d4aa",
     "Obsidian_notes/27.8.md",
     "Obsidian_notes/26.8.md",
     "Obsidian_notes/25.8.md",
